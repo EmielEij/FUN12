@@ -20,12 +20,15 @@ namespace honkballapp
 
         public List<Team> teams { get; private set; }
 
+        public List<wedstrijd> GespeeldeWedstrijden { get; private set; }
+
         public Competitie(string naam, int jaar, string klasse)
         {
             this.Naam = naam;
             this.Jaar = jaar;
             this.Klasse = klasse;
             teams = new List<Team>();
+            GespeeldeWedstrijden = new List<wedstrijd>();
             Laadteams();
         }
         public void Laadteams()
@@ -38,7 +41,6 @@ namespace honkballapp
             {
                 while (reader.Read())
                 {
-                    //id titel file location file size date lastplayed
                     int TeamID = reader.GetInt32(0);
                     string naamTeam = reader.GetString(1);                
                     Team team = new Team(TeamID,naamTeam);
@@ -47,7 +49,41 @@ namespace honkballapp
             }
             conn.Close();
         }
-
+        public void VoegWedstrijdToe(int thuisTeamID,int uitTeamID ,int puntenThuisTeam, int puntenUitteam )
+        {
+            GespeeldeWedstrijden.Clear();
+            UpdateWedstrijden();
+            conn.Open();
+            int wedstrijdID = GespeeldeWedstrijden.Count()+1;
+            wedstrijd wedstrijd = new wedstrijd(wedstrijdID, uitTeamID, thuisTeamID, puntenThuisTeam, puntenUitteam);
+            GespeeldeWedstrijden.Add(wedstrijd);
+            string Query = "insert into Resultaat (wedstrijdID, puntenThuisTeam, puntenUitTeam) values ("+wedstrijdID+","+puntenThuisTeam+","+puntenUitteam+ ") insert into Wedstrijd (ResultaatWedstrijd,ThuisTeamID,UitTeamID) values("+wedstrijdID+","+ thuisTeamID + ","+ uitTeamID+")";
+            SqlCommand cmd = new SqlCommand(Query, conn);
+            conn.Close();
+        }
+        public void UpdateWedstrijden()
+        {
+            GespeeldeWedstrijden.Clear();
+            conn.Open();
+            string Query = "select wedstrijdID,puntenThuisTeam,puntenUitTeam,ThuisTeamID,UitTeamID from Resultaat inner join Wedstrijd on Resultaat.wedstrijdID = Wedstrijd.ResultaatWedstrijdID";
+            SqlCommand cmd = new SqlCommand(Query, conn);
+            using (SqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    int wedstrijdID= reader.GetInt32(0);
+                    int puntenthuisteam = reader.GetInt32(1);
+                    int puntenuitteeam = reader.GetInt32(2);
+                    int thuisteamID = reader.GetInt32(3);
+                    int uitteamID = reader.GetInt32(4);
+                    wedstrijd wedstrijd = new wedstrijd(wedstrijdID, uitteamID, thuisteamID, puntenthuisteam, puntenuitteeam);
+                    GespeeldeWedstrijden.Add(wedstrijd);
+                }
+            }
+            conn.Close();
+        }
+        
+        
 
     }
 }

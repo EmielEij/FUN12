@@ -1,0 +1,3 @@
+﻿--insert into Resultaat (wedstrijdID,puntenThuisTeam,puntenUitTeam) values (3,8,12) insert into Wedstrijd (ResultaatWedstrijdID,ThuisTeamID,UitTeamID) values (3,4,5)
+select wedstrijdID,puntenThuisTeam,puntenUitTeam,ThuisTeamID,UitTeamID from Resultaat inner join Wedstrijd on Resultaat.wedstrijdID = Wedstrijd.ResultaatWedstrijdID
+--select puntenThuisTeam,puntenUitTeam,ThuisTeamID,UitTeamID from Resultaat,Wedstrijd

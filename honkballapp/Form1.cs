@@ -16,6 +16,15 @@ namespace honkballapp
         public Form1()
         {
             InitializeComponent();
+            int Index = MLB.teams.Count();
+            for (int i = 0; i < Index; i++)
+            {
+                comboBox1.Items.Add(MLB.teams[i].Naam());
+            }
+            for (int i = 0; i < Index; i++)
+            { 
+            comboBox2.Items.Add(MLB.teams[i].Naam());
+            }
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -23,8 +32,18 @@ namespace honkballapp
         }
 
         private void button1_Click(object sender, EventArgs e)
-        {          
-            listBox1.DataSource = MLB.teams;
+        {
+            int Index = MLB.teams.Count();
+            for (int i = 0; i < Index; i++)
+            {
+                listBox1.Items.Add(MLB.teams[i].Naam());
+            }
+            MLB.UpdateWedstrijden();
+            Index = MLB.GespeeldeWedstrijden.Count();
+            for (int i = 0; i < Index; i++)
+            {
+                listBox3.Items.Add(MLB.GespeeldeWedstrijden[i].uitslag());
+            }
         }
 
         private void listBox1_DoubleClick(object sender, EventArgs e)
@@ -41,6 +60,32 @@ namespace honkballapp
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void ListBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Button2_Click(object sender, EventArgs e)
+        {
+            int thuisTeamID = comboBox1.SelectedIndex;
+            int uitTeamID = comboBox2.SelectedIndex;
+            int uitslagThuisTeam = Convert.ToInt32(textBox1.Text);
+            int uitslagUitTeam = Convert.ToInt32(textBox2.Text);
+
+            MLB.VoegWedstrijdToe(thuisTeamID, uitTeamID, uitslagThuisTeam, uitslagUitTeam);
+            listBox3.Items.Clear();
+            int index = MLB.GespeeldeWedstrijden.Count;
+            for (int i = 0; i < index; i++)
+            {
+                listBox3.Items.Add(MLB.GespeeldeWedstrijden[i].uitslag());
+            }
         }
     }
 }
